@@ -31,14 +31,14 @@ export const Header = ({
   return (
     <header
       className={cn(
-        'flex h-16 items-center gap-3 bg-background p-4 sm:gap-4',
-        fixed && 'header-fixed peer/header fixed z-50 w-[inherit] rounded-md',
+        'flex h-16 items-center gap-3 bg-sidebar p-4 sm:gap-4 border-b border-border',
+        fixed && 'header-fixed peer/header fixed z-50 w-[inherit]',
         offset > 10 && fixed ? 'shadow' : 'shadow-none',
         className
       )}
       {...props}
     >
-      <SidebarTrigger variant='outline' className='scale-125 sm:scale-100' />
+      <SidebarTrigger variant='outline' className='scale-125 sm:scale-100 bg-transparent' />
       <Separator orientation='vertical' className='h-6' />
       {children}
     </header>

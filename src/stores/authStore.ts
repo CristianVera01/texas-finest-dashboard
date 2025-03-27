@@ -1,55 +1,54 @@
-import Cookies from 'js-cookie'
 import { create } from 'zustand'
-
-const ACCESS_TOKEN = 'thisisjustarandomstring'
-
-interface AuthUser {
-  accountNo: string
-  email: string
-  role: string[]
-  exp: number
-}
+import { User } from '@/features/auth/interfaces/User'
 
 interface AuthState {
-  auth: {
-    user: AuthUser | null
-    setUser: (user: AuthUser | null) => void
-    accessToken: string
-    setAccessToken: (accessToken: string) => void
-    resetAccessToken: () => void
-    reset: () => void
-  }
+  loading: boolean
+  isLoggedIn: boolean
+  user: User | null
+  accessToken: string
+  refreshToken: string
+  loadAuthentication: () => void
+  setAuthentication: (user: User, accessToken: string, refreshToken: string) => void
+  logout: () => void
 }
 
-export const useAuthStore = create<AuthState>()((set) => {
-  const cookieState = Cookies.get(ACCESS_TOKEN)
-  const initToken = cookieState ? JSON.parse(cookieState) : ''
-  return {
-    auth: {
-      user: null,
-      setUser: (user) =>
-        set((state) => ({ ...state, auth: { ...state.auth, user } })),
-      accessToken: initToken,
-      setAccessToken: (accessToken) =>
-        set((state) => {
-          Cookies.set(ACCESS_TOKEN, JSON.stringify(accessToken))
-          return { ...state, auth: { ...state.auth, accessToken } }
-        }),
-      resetAccessToken: () =>
-        set((state) => {
-          Cookies.remove(ACCESS_TOKEN)
-          return { ...state, auth: { ...state.auth, accessToken: '' } }
-        }),
-      reset: () =>
-        set((state) => {
-          Cookies.remove(ACCESS_TOKEN)
-          return {
-            ...state,
-            auth: { ...state.auth, user: null, accessToken: '' },
-          }
-        }),
-    },
-  }
-})
+export const useAuthStore = create<AuthState>()((set) => ({
+  loading: false,
+  isLoggedIn: false,
+  user: null,
+  accessToken: '',
+  refreshToken: '',
+  loadAuthentication: () => {
+    const accessToken = localStorage.getItem('accessToken')
+    const refreshToken = localStorage.getItem('refreshToken')
+    const user = localStorage.getItem('user')
 
-// export const useAuth = () => useAuthStore((state) => state.auth)
+    if (accessToken && refreshToken && user) {
+      set({
+        loading: false,
+        isLoggedIn: true,
+        user: JSON.parse(user),
+      })
+    } else {
+      set({ loading: false, isLoggedIn: false, user: null })
+    }
+  },
+  setAuthentication: (
+    user: User,
+    accessToken: string,
+    refreshToken: string
+  ) => {
+    localStorage.setItem('accessToken', accessToken)
+    localStorage.setItem('refreshToken', refreshToken)
+    localStorage.setItem('user', JSON.stringify(user))
+    set({ loading: false, isLoggedIn: true, user })
+  },
+  logout: () => {
+    localStorage.removeItem('accessToken')
+    localStorage.removeItem('refreshToken')
+    localStorage.removeItem('user')
+    set({ loading: false, isLoggedIn: false, user: null })
+  },
+}))
+
+export type AuthContext = typeof useAuthStore extends () => infer T ? T : never

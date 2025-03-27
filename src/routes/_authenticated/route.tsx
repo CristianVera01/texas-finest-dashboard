@@ -1,5 +1,5 @@
 import Cookies from 'js-cookie'
-import { createFileRoute, Outlet } from '@tanstack/react-router'
+import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
 import { cn } from '@/lib/utils'
 import { SearchProvider } from '@/context/search-context'
 import { SidebarProvider } from '@/components/ui/sidebar'
@@ -7,6 +7,14 @@ import { AppSidebar } from '@/components/layout/app-sidebar'
 import SkipToMain from '@/components/skip-to-main'
 
 export const Route = createFileRoute('/_authenticated')({
+  beforeLoad: ({ context }) => {
+    const { authentication } = context;
+    if (!authentication.isLoggedIn) {
+      throw redirect({
+        to: '/auth/login',
+      })
+    }
+  },
   component: RouteComponent,
 })
 
@@ -21,7 +29,7 @@ function RouteComponent() {
           id='content'
           className={cn(
             'ml-auto w-full max-w-full',
-            'peer-data-[state=collapsed]:w-[calc(100%-var(--sidebar-width-icon)-1rem)]',
+            'peer-data-[state=collapsed]:w-[calc(100%-var(--sidebar-width-icon))]',
             'peer-data-[state=expanded]:w-[calc(100%-var(--sidebar-width))]',
             'transition-[width] duration-200 ease-linear',
             'flex h-svh flex-col',
