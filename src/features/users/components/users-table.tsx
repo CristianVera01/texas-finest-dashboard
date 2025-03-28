@@ -121,6 +121,7 @@ export function UsersTable({ columns, data }: DataTableProps) {
                   className='h-24 text-center'
                 >
                   No results.
+                  // TODO: Add an empty indicator
                 </TableCell>
               </TableRow>
             )}
