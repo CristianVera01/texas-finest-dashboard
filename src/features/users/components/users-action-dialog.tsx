@@ -223,6 +223,7 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
                     </FormLabel>
                     <FormControl>
                       <Input
+                        disabled={isEdit}
                         placeholder='john.doe@gmail.com'
                         className='col-span-4'
                         {...field}
@@ -242,6 +243,7 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
                     </FormLabel>
                     <FormControl>
                       <Input
+                        disabled={isEdit}
                         placeholder='1234567890'
                         className='col-span-4'
                         {...field}
