@@ -11,8 +11,11 @@ import {
 import { NavGroup } from '@/components/layout/nav-group'
 import { sidebarData } from './data/sidebar-data'
 import { NavUser } from './nav-user';
+import { useAuthStore } from '@/stores/authStore';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+
+  const auth = useAuthStore();
 
   return (
     <Sidebar collapsible='icon' variant='sidebar' {...props}>
@@ -39,9 +42,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        {sidebarData.navGroups.map((props) => (
-          <NavGroup key={props.title} {...props} />
-        ))}
+        {sidebarData.navGroups.map((props) => {
+
+          if (props.title === 'Administration') {
+            return <NavGroup key={props.title} {...props} visible={auth.user!.role === 'ROLE_ADMINISTRATOR' || auth.user!.role === 'ROLE_OWNER'} />
+          }
+
+          return <NavGroup key={props.title} {...props} />
+        })}   
       </SidebarContent>
       <SidebarFooter>
         <NavUser />

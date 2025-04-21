@@ -28,29 +28,33 @@ import {
 } from '../ui/dropdown-menu'
 import { NavCollapsible, NavItem, NavLink, type NavGroup } from './types'
 
-export function NavGroup({ title, items }: NavGroup) {
+export function NavGroup({ title, items, visible = true }: NavGroup) {
   const { state } = useSidebar()
   const href = useLocation({ select: (location) => location.href })
-  return (
-    <SidebarGroup>
-      <SidebarGroupLabel>{title}</SidebarGroupLabel>
-      <SidebarMenu>
-        {items.map((item) => {
-          const key = `${item.title}-${item.url}`
+  
+  if (visible) {
+    return (
+      <SidebarGroup>
+        <SidebarGroupLabel>{title}</SidebarGroupLabel>
+        <SidebarMenu>
+          {items.map((item) => {
+            const key = `${item.title}-${item.url}`
+  
+            if (!item.items)
+              return <SidebarMenuLink key={key} item={item} href={href} />
+  
+            if (state === 'collapsed')
+              return (
+                <SidebarMenuCollapsedDropdown key={key} item={item} href={href} />
+              )
+  
+            return <SidebarMenuCollapsible key={key} item={item} href={href} />
+          })}
+        </SidebarMenu>
+      </SidebarGroup>
+    )
+  }
 
-          if (!item.items)
-            return <SidebarMenuLink key={key} item={item} href={href} />
-
-          if (state === 'collapsed')
-            return (
-              <SidebarMenuCollapsedDropdown key={key} item={item} href={href} />
-            )
-
-          return <SidebarMenuCollapsible key={key} item={item} href={href} />
-        })}
-      </SidebarMenu>
-    </SidebarGroup>
-  )
 }
 
 const NavBadge = ({ children }: { children: ReactNode }) => (

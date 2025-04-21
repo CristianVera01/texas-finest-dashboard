@@ -21,18 +21,20 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
+import { isValidPhoneNumber } from "react-phone-number-input";
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
 import { SelectDropdown } from '@/components/select-dropdown'
 import { User } from '@/features/auth/interfaces/User'
 import { useCreateUserMutation } from '../hooks/useCreateUserMutation'
 import { useUpdateUserMutation } from '../hooks/useUpdateUserMutation'
+import { PhoneInput } from '@/components/phone-input'
 
 const formSchema = z
   .object({
     firstName: z.string().min(1, { message: 'First Name is required.' }),
     lastName: z.string().min(1, { message: 'Last Name is required.' }),
-    phoneNumber: z.string().min(1, { message: 'Phone number is required.' }),
+    phoneNumber: z.string().refine(isValidPhoneNumber, { message: 'Invalid phone number.' }),
     email: z
       .string()
       .min(1, { message: 'Email is required.' })
@@ -103,22 +105,22 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
     resolver: zodResolver(formSchema),
     defaultValues: isEdit
       ? {
-          ...currentRow,
-          password: '',
-          confirmPassword: '',
-          isEdit,
-        }
+        ...currentRow,
+        password: '',
+        confirmPassword: '',
+        isEdit,
+      }
       : {
-          firstName: '',
-          lastName: '',
-          email: '',
-          role: '',
-          phoneNumber: '',
-          isActive: false,
-          password: '',
-          confirmPassword: '',
-          isEdit,
-        },
+        firstName: '',
+        lastName: '',
+        email: '',
+        role: '',
+        phoneNumber: '',
+        isActive: false,
+        password: '',
+        confirmPassword: '',
+        isEdit,
+      },
   })
 
   const onSubmit = (values: UserForm) => {
@@ -143,7 +145,7 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
         isActive: values.isActive,
         password: values.password,
       })
-    }
+    } 
 
     onOpenChange(false)
   }
@@ -177,19 +179,18 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
                 control={form.control}
                 name='firstName'
                 render={({ field }) => (
-                  <FormItem className='grid grid-cols-6 items-center gap-x-4 gap-y-1 space-y-0'>
-                    <FormLabel className='col-span-2 text-right'>
+                  <FormItem>
+                    <FormLabel>
                       First Name
                     </FormLabel>
                     <FormControl>
                       <Input
                         placeholder='John'
-                        className='col-span-4'
                         autoComplete='off'
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage className='col-span-4 col-start-3' />
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -197,19 +198,18 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
                 control={form.control}
                 name='lastName'
                 render={({ field }) => (
-                  <FormItem className='grid grid-cols-6 items-center gap-x-4 gap-y-1 space-y-0'>
-                    <FormLabel className='col-span-2 text-right'>
+                  <FormItem>
+                    <FormLabel>
                       Last Name
                     </FormLabel>
                     <FormControl>
                       <Input
                         placeholder='Doe'
-                        className='col-span-4'
                         autoComplete='off'
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage className='col-span-4 col-start-3' />
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -217,19 +217,18 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
                 control={form.control}
                 name='email'
                 render={({ field }) => (
-                  <FormItem className='grid grid-cols-6 items-center gap-x-4 gap-y-1 space-y-0'>
-                    <FormLabel className='col-span-2 text-right'>
+                  <FormItem>
+                    <FormLabel>
                       Email
                     </FormLabel>
                     <FormControl>
                       <Input
                         disabled={isEdit}
                         placeholder='john.doe@gmail.com'
-                        className='col-span-4'
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage className='col-span-4 col-start-3' />
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -237,19 +236,24 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
                 control={form.control}
                 name='phoneNumber'
                 render={({ field }) => (
-                  <FormItem className='grid grid-cols-6 items-center gap-x-4 gap-y-1 space-y-0'>
-                    <FormLabel className='col-span-2 text-right'>
+                  <FormItem>
+                    <FormLabel>
                       Phone Number
                     </FormLabel>
-                    <FormControl>
-                      <Input
+                    <FormControl
+                      className='w-full'
+                    >
+                      <PhoneInput
+                        placeholder="Enter a phone number"
                         disabled={isEdit}
-                        placeholder='1234567890'
-                        className='col-span-4'
+                        className='w-full'
+                        maxLength={12}
+                        defaultCountry='US'
+                        countries={["MX", "US", "CA"]}
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage className='col-span-4 col-start-3' />
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -257,15 +261,14 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
                 control={form.control}
                 name='role'
                 render={({ field }) => (
-                  <FormItem className='grid grid-cols-6 items-center gap-x-4 gap-y-1 space-y-0'>
-                    <FormLabel className='col-span-2 text-right'>
+                  <FormItem>
+                    <FormLabel>
                       Role
                     </FormLabel>
                     <SelectDropdown
                       defaultValue={field.value}
                       onValueChange={field.onChange}
                       placeholder='Select a role'
-                      className='col-span-4'
                       items={[
                         {
                           label: 'Administrator',
@@ -285,7 +288,7 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
                         },
                       ]}
                     />
-                    <FormMessage className='col-span-4 col-start-3' />
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -293,8 +296,8 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
                 control={form.control}
                 name='isActive'
                 render={({ field }) => (
-                  <FormItem className='grid grid-cols-6 items-center gap-x-4 gap-y-1 space-y-0'>
-                    <FormLabel className='col-span-2 text-right'>
+                  <FormItem>
+                    <FormLabel className='mr-2 text-right'>
                       Is active?
                     </FormLabel>
                     <FormControl>
@@ -310,8 +313,8 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
                 control={form.control}
                 name='password'
                 render={({ field }) => (
-                  <FormItem className='grid grid-cols-6 items-center gap-x-4 gap-y-1 space-y-0'>
-                    <FormLabel className='col-span-2 text-right'>
+                  <FormItem>
+                    <FormLabel>
                       Password
                     </FormLabel>
                     <FormControl>
@@ -321,7 +324,7 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage className='col-span-4 col-start-3' />
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -329,8 +332,8 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
                 control={form.control}
                 name='confirmPassword'
                 render={({ field }) => (
-                  <FormItem className='grid grid-cols-6 items-center gap-x-4 gap-y-1 space-y-0'>
-                    <FormLabel className='col-span-2 text-right'>
+                  <FormItem>
+                    <FormLabel>
                       Confirm Password
                     </FormLabel>
                     <FormControl>
@@ -341,7 +344,7 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage className='col-span-4 col-start-3' />
+                    <FormMessage />
                   </FormItem>
                 )}
               />

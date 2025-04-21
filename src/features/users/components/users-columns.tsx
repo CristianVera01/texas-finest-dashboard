@@ -42,9 +42,9 @@ export const columns: ColumnDef<User>[] = [
     ),
     cell: ({ row }) => {
 
-      const { phoneNumber, countryCode } = row.original;
+      const { phoneNumber } = row.original;
 
-      return <div>{countryCode} {phoneNumber}</div>;
+      return <div>{phoneNumber}</div>;
     },
     enableSorting: false,
   },

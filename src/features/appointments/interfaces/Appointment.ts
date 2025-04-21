@@ -1,10 +1,7 @@
-export enum Status {
+export enum StatusAppointment {
     PENDING = 'PENDING',
-    CONFIRMED = 'CONFIRMED',
     CANCELLED = 'CANCELLED',
-    RESCHEDULED = 'RESCHEDULED',
-    COMPLETED = 'COMPLETED',
-    NOT_SHOWN = 'NOT_SHOWN'
+    COMPLETED = 'COMPLETED'
 }
 
 export interface Appointment {
@@ -16,7 +13,7 @@ export interface Appointment {
     email: string;
     countryCode: string;
     phoneNumber: string;
-    status: Status;
+    status: StatusAppointment;
     createdAt: string;
     updatedAt: string;
 }

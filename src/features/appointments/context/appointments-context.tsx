@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
 import { Appointment } from '../interfaces/Appointment'
 
-type AppointmentsDialogType = 'add' | 'edit' | 'delete'
+type AppointmentsDialogType = 'add' | 'completed' | 'cancel'
 
 interface AppointmentsContextType {
   open: AppointmentsDialogType | null

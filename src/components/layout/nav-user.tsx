@@ -5,7 +5,6 @@ import {
   ChevronsUpDown,
   CreditCard,
   LogOut,
-  Sparkles,
 } from 'lucide-react'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
@@ -24,6 +23,13 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar'
 import { useAuthStore } from '@/stores/authStore'
+
+const roleMapping: Record<string, string> = {
+  ROLE_ADMINISTRATOR: 'Administrator',
+  ROLE_OWNER: 'Owner',
+  ROLE_BARBER: 'Barber',
+  ROLE_TATTOOER: 'Tattooer',
+}
 
 export function NavUser() {
   const { isMobile } = useSidebar()
@@ -46,7 +52,7 @@ export function NavUser() {
               </Avatar>
               <div className='grid flex-1 text-left text-sm leading-tight'>
                 <span className='truncate font-semibold'>{user!.firstName} {user!.lastName}</span>
-                <span className='truncate text-xs'>{user!.email}</span>
+                <span className='truncate text-xs'>{roleMapping[user!.role]}</span>
               </div>
               <ChevronsUpDown className='ml-auto size-4' />
             </SidebarMenuButton>
@@ -65,17 +71,10 @@ export function NavUser() {
                 </Avatar>
                 <div className='grid flex-1 text-left text-sm leading-tight'>
                   <span className='truncate font-semibold'>{user!.firstName} {user!.lastName}</span>
-                  <span className='truncate text-xs'>{user!.email}</span>
+                  <span className='truncate text-xs'>{roleMapping[user!.role]}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Sparkles />
-                Upgrade to Pro
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem asChild>

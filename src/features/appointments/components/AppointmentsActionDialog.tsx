@@ -20,9 +20,22 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Appointment } from '../interfaces/Appointment'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import { cn } from '@/lib/utils'
+import { CalendarIcon } from 'lucide-react'
+import { Calendar } from '@/components/ui/calendar'
+import { format } from 'date-fns'
+import { PhoneInput } from '@/components/phone-input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { useGetAvailableHoursByDateLazy } from '../hooks/useGetAvailableHoursByDateLazy'
+import { useCreateAppointmentMutation } from '../hooks/useCreateAppointmentMutation'
 
 const formSchema = z.object({
-  appointmentDate: z.string(),
+  appointmentDate: z.string().min(1, { message: 'Date is required.' }),
   appointmentTime: z.string(),
   firstName: z.string().min(1, { message: 'First Name is required.' }),
   lastName: z.string().min(1, { message: 'Last Name is required.' }),
@@ -31,7 +44,6 @@ const formSchema = z.object({
     .string()
     .min(1, { message: 'Email is required.' })
     .email({ message: 'Email is invalid.' }),
-  countryCode: z.string().min(1, { message: 'Country code is required.' }),
   isEdit: z.boolean(),
 })
 
@@ -48,44 +60,46 @@ export const AppointmentsActionDialog = ({
   open,
   onOpenChange,
 }: Props) => {
+
+  const { isPending, mutate: createAppointment } = useCreateAppointmentMutation();
+
   const isEdit = !!currentRow
   const form = useForm<AppointmentForm>({
     resolver: zodResolver(formSchema),
-    defaultValues: isEdit
-      ? {
-          ...currentRow,
-          isEdit,
-        }
-      : {
-          appointmentDate: '',
-          appointmentTime: '',
-          firstName: '',
-          lastName: '',
-          email: '',
-          countryCode: '',
-          phoneNumber: '',
-          isEdit,
-        },
+    defaultValues:{
+        appointmentDate: '',
+        appointmentTime: '',
+        firstName: '',
+        lastName: '',
+        email: '',
+        phoneNumber: '',
+        isEdit,
+      },
   })
 
   const onSubmit = (values: AppointmentForm) => {
+
+    createAppointment({
+      appointmentDate: values.appointmentDate,
+      appointmentTime: values.appointmentTime,
+      firstName: values.firstName,
+      lastName: values.lastName,
+      email: values.email,
+      phoneNumber: values.phoneNumber,
+    })
+
     form.reset()
-    console.log(values)
-
-    if (isEdit) {
-      // update
-    } else {
-      // create
-    }
-
     onOpenChange(false)
   }
+
+  const { data: availableHours, isSuccess, loadDate } = useGetAvailableHoursByDateLazy();
 
   return (
     <Dialog
       open={open}
       onOpenChange={(state) => {
         form.reset()
+        loadDate(null!);
         onOpenChange(state)
       }}
     >
@@ -147,41 +161,101 @@ export const AppointmentsActionDialog = ({
                   </FormItem>
                 )}
               />
-              <div
-                className='flex flex-row gap-2 w-full'
-              >
+              <FormField
+                control={form.control}
+                name='phoneNumber'
+                render={({ field }) => (
+                  <FormItem className='w-full'>
+                    <FormLabel>Phone Number</FormLabel>
+                    <FormControl>
+                      <PhoneInput
+                        placeholder='Enter a phone number'
+                        className='w-full'
+                        countries={["US", "MX", "CA"]}
+                        defaultCountry='US'
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="appointmentDate"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>Date of Appointment</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant={"outline"}
+                            className={cn(
+                              "w-full pl-3 text-left font-normal",
+                              !field.value && "text-muted-foreground")}
+                          >
+                            {field.value ? (
+                              format(field.value, "PPP")
+                            ) : (<span>Pick a date</span>
+                            )}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode='single'
+                          selected={field.value ? new Date(field.value) : undefined}
+                          onSelect={(date) => {
+
+                            loadDate(format(date!, "yyyy-MM-dd"))
+
+                            field.onChange(date!.toISOString())
+                          }}
+                          disabled={{
+                            before: new Date(),
+                          }}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {
+                availableHours && isSuccess &&
                 <FormField
                   control={form.control}
-                  name='countryCode'
+                  name='appointmentTime'
                   render={({ field }) => (
-                    <FormItem className='w-full max-w-[120px]'>
-                      <FormLabel>Country Code</FormLabel>
-                      <FormControl>
-                        <Input placeholder='+1' {...field} className='w-full'/>
-                      </FormControl>
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Time of Appointment</FormLabel>
+                      <Select
+                        defaultValue={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select a time" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableHours!.map((hour) => (
+                            <SelectItem key={hour} value={hour}>
+                              {hour} HRS
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name='phoneNumber'
-                  render={({ field }) => (
-                    <FormItem className='w-full'>
-                      <FormLabel>Phone Number</FormLabel>
-                      <FormControl>
-                        <Input placeholder='1234567890' {...field} className='w-full'/>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+              }
             </form>
           </Form>
         </div>
         <DialogFooter>
-          <Button type='submit' form='appointment-form'>
+          <Button type='submit' form='appointment-form' disabled={isPending}>
             Save
           </Button>
         </DialogFooter>

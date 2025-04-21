@@ -3,6 +3,9 @@ import { Badge } from '@/components/ui/badge'
 import LongText from '@/components/long-text'
 import { DataTableColumnHeader } from '@/features/users/components/data-table-column-header'
 import { Appointment } from '../interfaces/Appointment'
+import { DataTableRowActions } from './DataTableRowActions'
+import { cn } from '@/lib/utils'
+import { callTypes } from '../data/data'
 
 export const columns: ColumnDef<Appointment>[] = [
   {
@@ -68,9 +71,16 @@ export const columns: ColumnDef<Appointment>[] = [
       <DataTableColumnHeader column={column} title='Status' />
     ),
     cell: ({ row }) => {
+
+      const { status } = row.original
+      const statusColor = callTypes.get(status)
+
       return (
         <div className='flex space-x-2'>
-          <Badge variant='outline'>{row.getValue('status')}</Badge>
+          <Badge variant='outline' className={cn('capitalize', statusColor)}
+          >
+            {row.getValue('status')}
+          </Badge>
         </div>
       )
     },
@@ -80,4 +90,8 @@ export const columns: ColumnDef<Appointment>[] = [
     enableHiding: false,
     enableSorting: false,
   },
+  {
+    id: 'actions',
+    cell: DataTableRowActions,
+  }
 ]
