@@ -10,15 +10,15 @@ interface Props {
     onOpenChange: (open: boolean) => void
 }
 
-export const AppointmentsActionCompletedDialog = ({ currentRow, open, onOpenChange }: Props) => {
+export const AppointmentsActionCancelledDialog = ({ currentRow, open, onOpenChange }: Props) => {
 
     const { changeAppointmentStatusMutation } = useChangeAppointmentStatusMutation();
-    const { mutate: setAppointmentAsCompleted } = changeAppointmentStatusMutation;
+    const { mutate: setAppointmentAsCancelled } = changeAppointmentStatusMutation;
 
-    const handleSetAsCompleted = () => {
-        setAppointmentAsCompleted({
+    const handleSetAsCancelled = () => {
+        setAppointmentAsCancelled({
             appointmentId: currentRow!.id!.toString(),
-            status: StatusAppointment.COMPLETED,
+            status: StatusAppointment.CANCELLED,
         })
 
         onOpenChange(false)
@@ -28,14 +28,14 @@ export const AppointmentsActionCompletedDialog = ({ currentRow, open, onOpenChan
         <ConfirmDialog
             open={open}
             onOpenChange={onOpenChange}
-            handleConfirm={handleSetAsCompleted}
+            handleConfirm={handleSetAsCancelled}
             title={
-                <span className='text-green-600'>
+                <span className='text-red-600'>
                     <IconProgressCheck
-                        className='mr-1 inline-block stroke-green-600   '
+                        className='mr-1 inline-block stroke-red-600   '
                         size={18}
                     />{' '}
-                    Set appointment as completed
+                    Set appointment as cancelled
                 </span>
             }
             desc={
@@ -43,7 +43,7 @@ export const AppointmentsActionCompletedDialog = ({ currentRow, open, onOpenChan
                     <p className='mb-2'>
                         Are you sure you want to set{' '}
                         <span className='font-bold'>{currentRow?.firstName} {currentRow?.lastName}</span>{' '}
-                        appointment as completed?
+                        appointment as cancelled?
                     </p>
 
                     <Alert variant='destructive'>

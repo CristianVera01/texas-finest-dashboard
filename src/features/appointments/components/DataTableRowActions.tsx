@@ -1,6 +1,6 @@
 import { Row } from "@tanstack/react-table";
 import { useAppointments } from "../context/appointments-context"
-import { Appointment } from "../interfaces/Appointment";
+import { Appointment, StatusAppointment } from "../interfaces/Appointment";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -39,6 +39,7 @@ export const DataTableRowActions = ({ row }: DataTableRowActionsProps) => {
                             setCurrentRow(row.original)
                             setOpen('completed')
                         }}
+                        disabled={row.original.status === StatusAppointment.COMPLETED}
                         className="!text-green-600"
                     >
                         Completed
@@ -53,6 +54,7 @@ export const DataTableRowActions = ({ row }: DataTableRowActionsProps) => {
                             setOpen('cancel')
                         }}
                         className='!text-red-500'
+                        disabled={row.original.status === StatusAppointment.CANCELLED}
                     >
                         Cancel
                         <DropdownMenuShortcut>
