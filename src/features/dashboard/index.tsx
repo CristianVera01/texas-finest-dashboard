@@ -12,6 +12,7 @@ import { ProfileDropdown } from '@/components/profile-dropdown'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { Overview } from './components/overview'
 import { RecentSales } from './components/recent-sales'
+import { Appointments } from '../appointments/index';
 
 export default function Dashboard() {
   return (
@@ -64,7 +65,7 @@ export default function Dashboard() {
               <Card>
                 <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
                   <CardTitle className='text-sm font-medium'>
-                    Subscriptions
+                    Total Appointments
                   </CardTitle>
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
@@ -90,7 +91,7 @@ export default function Dashboard() {
               </Card>
               <Card>
                 <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                  <CardTitle className='text-sm font-medium'>Sales</CardTitle>
+                  <CardTitle className='text-sm font-medium'>Month Appointments</CardTitle>
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
                     viewBox='0 0 24 24'
@@ -115,7 +116,7 @@ export default function Dashboard() {
               <Card>
                 <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
                   <CardTitle className='text-sm font-medium'>
-                    Active Now
+                    Appointments for today
                   </CardTitle>
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
@@ -131,7 +132,7 @@ export default function Dashboard() {
                   </svg>
                 </CardHeader>
                 <CardContent>
-                  <div className='text-2xl font-bold'>+573</div>
+                  <div className='text-2xl font-bold'>+10</div>
                   <p className='text-xs text-muted-foreground'>
                     +201 since last hour
                   </p>
@@ -149,9 +150,9 @@ export default function Dashboard() {
               </Card>
               <Card className='col-span-1 lg:col-span-3'>
                 <CardHeader>
-                  <CardTitle>Recent Sales</CardTitle>
+                  <CardTitle>Recent Appointments</CardTitle>
                   <CardDescription>
-                    You made 265 sales this month.
+                    You made 265 appointments this month.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
