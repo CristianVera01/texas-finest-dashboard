@@ -1,11 +1,8 @@
 import {
-  IconBrowserCheck,
   IconCalendar,
   IconLayoutDashboard,
-  IconNotification,
   IconPalette,
   IconSettings,
-  IconTool,
   IconUserCog,
   IconUsers,
 } from '@tabler/icons-react'
@@ -46,24 +43,9 @@ export const sidebarData: SidebarData = {
               icon: IconUserCog,
             },
             {
-              title: 'Account',
-              url: '/settings/account',
-              icon: IconTool,
-            },
-            {
               title: 'Appearance',
               url: '/settings/appearance',
               icon: IconPalette,
-            },
-            {
-              title: 'Notifications',
-              url: '/settings/notifications',
-              icon: IconNotification,
-            },
-            {
-              title: 'Display',
-              url: '/settings/display',
-              icon: IconBrowserCheck,
             },
           ],
         },
