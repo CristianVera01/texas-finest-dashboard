@@ -1,6 +1,5 @@
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { toast } from '@/hooks/use-toast'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -15,6 +14,7 @@ import { Input } from '@/components/ui/input'
 import { useForm } from 'react-hook-form'
 import { useAuthStore } from '@/stores/authStore'
 import { PhoneInput } from '@/components/phone-input'
+import { useUpdateProfileMutation } from '../hooks/useUpdateProfileMutation'
 
 const profileFormSchema = z.object({
   firstName: z.
@@ -28,12 +28,14 @@ const profileFormSchema = z.object({
   phoneNumber: z
     .string()
     .min(2, { message: 'Phone number must be at least 2 characters.' })
-    .max(15, { message: 'Phone number must not be longer than 30 characters.' }),
+    .max(15, { message: 'Phone number must not be longer than 30 characters.' })
+    .optional(),
   email: z
     .string({
       required_error: 'Please select an email to display.',
     })
-    .email(),
+    .email()
+    .optional(),
 })
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>
@@ -41,6 +43,7 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>
 
 export default function ProfileForm() {
 
+  const { updateProfileMutation } = useUpdateProfileMutation();
   const { user } = useAuthStore();
 
   const defaultValues: Partial<ProfileFormValues> = {
@@ -59,14 +62,11 @@ export default function ProfileForm() {
 
 
   function onSubmit(data: ProfileFormValues) {
-    toast({
-      title: 'You submitted the following values:',
-      description: (
-        <pre className='mt-2 w-[340px] rounded-md bg-slate-950 p-4'>
-          <code className='text-white'>{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    })
+    updateProfileMutation.mutate({
+      firstName: data.firstName,
+      lastName: data.lastName,
+      userId: user!.id,
+    });
   }
 
   return (
@@ -82,7 +82,7 @@ export default function ProfileForm() {
                 <Input placeholder='Enter your first name...' {...field} />
               </FormControl>
               <FormDescription>
-                This is your public display name. It can be your real name or a pseudonym. You can only change this once every 30 days.
+                This is your public display name. It can be your real name or a pseudonym.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -108,7 +108,7 @@ export default function ProfileForm() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder='Enter your email...' {...field} />
+                <Input placeholder='Enter your email...' {...field} disabled />
               </FormControl>
               <FormDescription>
                 This email will be received all notifications about your account and appointments.
@@ -117,14 +117,14 @@ export default function ProfileForm() {
             </FormItem>
           )}
         />
-        <FormField 
+        <FormField
           control={form.control}
           name='phoneNumber'
           render={({ field }) => (
             <FormItem>
               <FormLabel>Phone Number</FormLabel>
               <FormControl>
-                <PhoneInput placeholder='Enter your phone number...' {...field} />
+                <PhoneInput placeholder='Enter your phone number...' {...field} disabled />
               </FormControl>
               <FormDescription>
                 This phone number will be used for all communications with you.

@@ -10,6 +10,7 @@ interface AuthState {
   loadAuthentication: () => void
   setAuthentication: (user: User, accessToken: string, refreshToken: string) => void
   logout: () => void
+  updateUser: (user: User) => void
 }
 
 export const useAuthStore = create<AuthState>()((set) => ({
@@ -48,6 +49,10 @@ export const useAuthStore = create<AuthState>()((set) => ({
     localStorage.removeItem('refreshToken')
     localStorage.removeItem('user')
     set({ loading: false, isLoggedIn: false, user: null })
+  },
+  updateUser: (user: User) => {
+    localStorage.setItem('user', JSON.stringify(user))
+    set({ user })
   },
 }))
 
