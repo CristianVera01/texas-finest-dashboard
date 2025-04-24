@@ -51,7 +51,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   }
 
   return (
-    <div className={cn('grid gap-6', className)} {...props}>
+    <div className={cn('grid gap-6 w-full max-w-[450px]', className)} {...props}>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} autoComplete='off'>
           <div className='grid gap-2'>
@@ -78,6 +78,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
                     <Link
                       to='/auth/forgot-password'
                       className='text-sm font-medium text-muted-foreground hover:opacity-75'
+                      autoFocus={false}
                     >
                       Forgot password?
                     </Link>
