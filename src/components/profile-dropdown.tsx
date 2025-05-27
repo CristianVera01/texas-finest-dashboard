@@ -25,7 +25,7 @@ export function ProfileDropdown() {
         <DropdownMenuTrigger asChild>
           <Button variant='ghost' className='relative h-8 w-8 rounded-full'>
             <Avatar className='h-8 w-8'>
-              <AvatarFallback className='border bg-white'>
+              <AvatarFallback className='border bg-white dark:bg-gray-800'>
                 {user!.firstName.charAt(0)}
               </AvatarFallback>
             </Avatar>
