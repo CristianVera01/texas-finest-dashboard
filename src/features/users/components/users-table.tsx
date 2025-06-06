@@ -25,6 +25,7 @@ import {
 import { DataTablePagination } from './data-table-pagination'
 import { DataTableToolbar } from './data-table-toolbar'
 import { User } from '@/features/auth/interfaces/User'
+import { EmptyState } from '@/assets/EmptyState'
 
 declare module '@tanstack/react-table' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -118,9 +119,12 @@ export function UsersTable({ columns, data }: DataTableProps) {
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className='h-24 text-center'
+                  className='h-24 text-center p-4'
                 >
-                  No results.
+                  <div className='flex flex-col items-center justify-center'>
+                    <EmptyState width={200} height={200} />
+                    <p className='mt-2 text-center text-muted-foreground'>No users found you can add a new user by clicking the button.</p>
+                  </div>
                 </TableCell>
               </TableRow>
             )}
